@@ -1,14 +1,15 @@
 import sys
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QGroupBox, QDialog, QVBoxLayout, QGridLayout
 import pyqtgraph as pg
 from TraceListWidget import TraceList
 from twisted.internet.defer import inlineCallbacks
 from twisted.internet.task import LoopingCall
 import itertools
-import Queue
+from queue import Queue
 
 
-class imageWidget(QtGui.QWidget):
+class imageWidget(QWidget):
 
     def __init__(self, config, reactor, parent=None, cxn=None):
         super(imageWidget, self).__init__(parent)
@@ -67,8 +68,8 @@ class imageWidget(QtGui.QWidget):
                 pass
 
         except:
-            print 'Could not access index: ' + str(self.image_index)
-
+            print('Could not access index: ' + str(self.image_index))
+            
     def on_prev(self):
         try:
             if self.image_index > 0:
@@ -78,7 +79,7 @@ class imageWidget(QtGui.QWidget):
             else:
                 pass
         except:
-            print 'Could not access index: ' + str(self.image_index)
+            print('Could not access index: ' + str(self.image_index))
 
     def mouse_clicked(self, event):
         '''
@@ -92,9 +93,9 @@ class imageWidget(QtGui.QWidget):
             self.hLine.setPos(mousePoint.y())
 
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
-    import qt4reactor
-    qt4reactor.install()
+    app = QApplication(sys.argv)
+    import qt5reactor
+    qt5reactor.install()
     from twisted.internet import reactor
     main = imageWidget('example', reactor)
     main.show()
