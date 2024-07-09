@@ -1,18 +1,24 @@
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtWidgets import *
+
 from twisted.internet.defer import inlineCallbacks, returnValue, DeferredLock, Deferred
 from analysis.fitting import FitWrapper
+from queue import Queue
 
-class RowInfo():
-    '''
+
+class RowInfo:
+    """
     Container for the widgets with
     each row in the parameters table
-    '''
+    """
+
     def __init__(self, vary, manual_value, fitted_value):
         self.vary_select = vary
         self.manual_value = manual_value
         self.fitted_value = fitted_value
 
-class FitWindow(QtGui.QWidget):
+
+class FitWindow(QWidget):
 
     def __init__(self, dataset, index, parent):
         super(FitWindow, self).__init__()
@@ -26,19 +32,19 @@ class FitWindow(QtGui.QWidget):
 
     def initUI(self):
         self.setWindowTitle(self.ident)
-        mainLayout = QtGui.QVBoxLayout()
-        buttons = QtGui.QHBoxLayout()
+        mainLayout = QVBoxLayout()
+        buttons = QHBoxLayout()
 
-        self.model_select = QtGui.QComboBox(self)
+        self.model_select = QComboBox(self)
         for model in self.fw.models:
             self.model_select.addItem(model)
 
-        self.parameterTable = QtGui.QTableWidget()
+        self.parameterTable = QTableWidget()
         self.parameterTable.setColumnCount(4)
 
-        self.fitButton = QtGui.QPushButton('Fit', self)
+        self.fitButton = QPushButton('Fit', self)
 
-        self.plotButton = QtGui.QPushButton('Plot manual', self)
+        self.plotButton = QPushButton('Plot manual', self)
 
         self.fw.setModel(str(self.model_select.currentText()))
 
@@ -47,7 +53,7 @@ class FitWindow(QtGui.QWidget):
         mainLayout.addLayout(buttons)
         buttons.addWidget(self.fitButton)
         buttons.addWidget(self.plotButton)
-        
+
         self.model_select.activated.connect(self.onActivated)
         self.fitButton.clicked.connect(self.onClick)
         self.plotButton.clicked.connect(self.onPlot)
@@ -59,27 +65,27 @@ class FitWindow(QtGui.QWidget):
     def setupParameterTable(self):
 
         self.parameterTable.clear()
-        
-        headerLabels = QtCore.QStringList(['Vary', 'Param', 'Manual', 'Fitted'])
+
+        headerLabels = QtCore.QStringListModel(['Vary', 'Param', 'Manual', 'Fitted'])
         self.parameterTable.setHorizontalHeaderLabels(headerLabels)
         self.parameterTable.horizontalHeader().setStretchLastSection(True)
 
         params = self.fw.getParameters()
         self.parameterTable.setRowCount(len(params))
-        for i,p in enumerate(params):
+        for i, p in enumerate(params):
 
-            vary_select = QtGui.QTableWidgetItem()
-            label = QtGui.QLabel(p)
-            manual_value = QtGui.QDoubleSpinBox()
-            fitted_value = QtGui.QTableWidgetItem()
+            vary_select = QTableWidgetItem()
+            label = QLabel(p)
+            manual_value = QDoubleSpinBox()
+            fitted_value = QTableWidgetItem()
 
             self.row_info_dict[p] = RowInfo(vary_select, manual_value, fitted_value)
 
-            vary_select.setFlags(QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            vary_select.setFlags(QtCore.Qt.ItemFlag.ItemIsUserCheckable | QtCore.Qt.ItemFlag.ItemIsEnabled)
             if self.fw.getVary(p):
-                vary_select.setCheckState(QtCore.Qt.Checked)
+                vary_select.setCheckState(QtCore.Qt.CheckState.Checked)
             else:
-                vary_select.setCheckState(QtCore.Qt.Unchecked)
+                vary_select.setCheckState(QtCore.Qt.CheckState.Unchecked)
 
             manualValue = self.fw.getManualValue(p)
             manual_value.setDecimals(6)
@@ -93,7 +99,7 @@ class FitWindow(QtGui.QWidget):
             self.parameterTable.setItem(i, 0, vary_select)
             self.parameterTable.setCellWidget(i, 1, label)
             self.parameterTable.setCellWidget(i, 2, manual_value)
-            self.parameterTable.setItem(i, 3, fitted_value)            
+            self.parameterTable.setItem(i, 3, fitted_value)
 
     def updateParametersToFitter(self):
         params = self.fw.getParameters()
@@ -116,9 +122,8 @@ class FitWindow(QtGui.QWidget):
         for p in params:
             row = self.row_info_dict[p]
             fitted_value = self.fw.getFittedValue(p)
-            row.fitted_value.setText( str(fitted_value) )
-            row.manual_value.setValue( fitted_value )
-            
+            row.fitted_value.setText(str(fitted_value))
+            row.manual_value.setValue(fitted_value)
 
     def plotFit(self):
         '''
@@ -131,14 +136,15 @@ class FitWindow(QtGui.QWidget):
             def __init__(self, data):
                 self.data = data
                 self.updateCounter = 1
+
         data = self.fw.evaluateFittedParameters()
         ds = dataset(data)
         try:
             # remove the previous fit
             self.parent.parent.remove_artist(self.ident)
-            self.parent.parent.add_artist(self.ident, ds, 0, no_points = True)
+            self.parent.parent.add_artist(self.ident, ds, 0, no_points=True)
         except:
-            self.parent.parent.add_artist(self.ident, ds, 0, no_points = True)
+            self.parent.parent.add_artist(self.ident, ds, 0, no_points=True)
 
     def onActivated(self):
         '''
@@ -180,10 +186,9 @@ class FitWindow(QtGui.QWidget):
         try:
             # remove the previous plot
             self.parent.parent.remove_artist(self.ident)
-            self.parent.parent.add_artist(self.ident, ds, 0, no_points = True)
+            self.parent.parent.add_artist(self.ident, ds, 0, no_points=True)
         except:
-            self.parent.parent.add_artist(self.ident, ds, 0, no_points = True)
-
+            self.parent.parent.add_artist(self.ident, ds, 0, no_points=True)
 
     def closeEvent(self, event):
         self.parent.parent.remove_artist(self.ident)

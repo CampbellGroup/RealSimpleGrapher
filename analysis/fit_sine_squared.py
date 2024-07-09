@@ -1,0 +1,40 @@
+# Fitter class for Sinewave
+
+from analysis.model import Model, ParameterInfo
+import numpy as np
+
+
+class SineSquared(Model):
+
+    def __init__(self):
+        self.parameters = {
+            'pi_time': ParameterInfo('pi_time', 0, self.guess_pi),
+            'amplitude': ParameterInfo('amplitude', 1, self.guess_amplitude),
+            'phase': ParameterInfo('phase', 2, self.guess_phase),
+            'offset': ParameterInfo('offset', 3, self.guess_offset),
+            }
+
+    def model(self, x, p):
+
+        '''
+        '''
+
+        f = 1/(2*p[0])
+        A = p[1]
+        phi = p[2]
+        b = p[3]
+        return A*np.sin(np.pi*f*x + phi)**2 + b
+
+    def guess_pi(self, x, y):
+        time_plot = max(x) - min(x)
+        f = 2.5/time_plot
+        return 1/(2*f)
+
+    def guess_amplitude(self, x, y):
+        return max(y) - min(y)
+
+    def guess_phase(self, x, y):
+        return 0
+
+    def guess_offset(self, x, y):
+        return min(y)

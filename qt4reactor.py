@@ -43,8 +43,8 @@ import sys, time
 
 from zope.interface import implements
 
-from PyQt4.QtCore import QSocketNotifier, QObject, SIGNAL, QTimer, QCoreApplication
-from PyQt4.QtCore import QEventLoop
+from PyQt5.QtCore import QSocketNotifier, QObject, pyqtSignal, QTimer, QCoreApplication
+from PyQt5.QtCore import QEventLoop
 
 from twisted.internet.interfaces import IReactorFDSet
 from twisted.python import log
@@ -56,6 +56,7 @@ class TwistedSocketNotifier(QSocketNotifier):
     """
 
     def __init__(self, reactor, watcher, type):
+        print('is this running')
         QSocketNotifier.__init__(self, watcher.fileno(), type)
         self.reactor = reactor
         self.watcher = watcher
@@ -115,16 +116,17 @@ class fakeApplication(QEventLoop):
         
     def exec_(self):
         QEventLoop.exec_(self)
-        
+
 class QTReactor(PosixReactorBase):
     """
     Qt based reactor.
     """
-    implements(IReactorFDSet)
+    
 
     _timer = None
 
     def __init__(self):
+        print('is this running')
         self._reads = {}
         self._writes = {}
         self._timer=QTimer()
@@ -248,6 +250,7 @@ def install():
     """
     Configure the twisted mainloop to be run inside the qt mainloop.
     """
+    print('is this running')
     from twisted.internet import main
     reactor = QTReactor()
     main.installReactor(reactor)

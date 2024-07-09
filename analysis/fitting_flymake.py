@@ -2,28 +2,18 @@
 
 import numpy as np
 from scipy import optimize
-from analysis.fit_lorentzian import Lorentzian, Mod_Lorentzian
-from analysis.fit_gaussian import Gaussian
-from analysis.fit_linear import Linear
-from analysis.fit_rabi import Rabi
-from analysis.fit_bessel import Bessel
-from analysis.fit_rotrabi import RotRabi
-from analysis.fit_rotramsey import RotRamsey
-from analysis.fit_sinusoid import Sinusoid
-from analysis.fit_sinusoid2 import Sinusoid2
-from analysis.fit_expdecay import ExponentialDecay
-from analysis.fit_exponential_decay import ExponentialDecay
-from analysis.fit_gaussdecay import GaussianDecay
-from analysis.fit_ramsey import RamseyDecay
-from analysis.fit_ramseybfield import RamseyBfield
-from analysis.fit_sine_squared import SineSquared
-from analysis.fit_ramsey import SineSquared_Ramsey
-from analysis.fit_sinc import Sinc
+from fit_lorentzian import Lorentzian
+from fit_linear import Linear
+from fit_bessel import Bessel
+from fit_exponential_decay import ExponentialDecay
+from fit_sine_squared import SineSquared
+from fit_ramsey import SineSquared_Ramsey
+from fit_sinc import Sinc
 
 
 class FitWrapper():
 
-    models = ['Lorentzian', 'Linear', 'Bessel', 'Exponential Decay', 'SineSquared', 'Ramsey', 'Sinc', 'Sidebands']
+    models = ['Lorentzian', 'Linear', 'Bessel', 'Exponential Decay', 'SineSquared', 'Ramsey', 'Sinc']
 
     def __init__(self, dataset, index):
         self.dataset = dataset
@@ -33,28 +23,20 @@ class FitWrapper():
 
         model_dict = {
             'Lorentzian': Lorentzian,
-            'Gaussian': Gaussian,
             'Linear': Linear,
             'Bessel': Bessel,
             'Exponential Decay': ExponentialDecay,
             'SineSquared': SineSquared,
             'Ramsey': SineSquared_Ramsey,
-            'Sinc': Sinc,
-            'Sidebands': Mod_Lorentzian,
-            'Sinusoid': Sinusoid,
-            'Sinusoid2': Sinusoid2,
-            'ExponentialDecay': ExponentialDecay,
-            'GaussianDecay': GaussianDecay,
-            'RamseyDecay': RamseyDecay,
-            'RamseyBfield': RamseyBfield
+            'Sinc': Sinc
             }
         self.model = model_dict[model]()
 
     def getParameters(self):
-        """
+        '''
         Returns a list of params
         sorted in order of index
-        """
+        '''
         params = self.model.parameters.keys()
         return sorted(params, key=lambda p: self.model.parameters[p].index)
 
@@ -95,7 +77,6 @@ class FitWrapper():
         varied_positions = self.model.varied_positions()
         fixed_positions = self.model.fixed_positions()
         x0 = [self.model.param_from_index(k).manual_value for k in varied_positions]
-        
         result = optimize.leastsq(residual, x0)
         result = result[0]
 
@@ -111,12 +92,12 @@ class FitWrapper():
             param.fit_value = param.manual_value
 
     def evaluateFittedParameters(self):
-        """
+        '''
         Evaluate the model on a fine grid
         Return 2-d numpy array data where
         data[:,0] = fine_grid
         data[:,1] = model evaluated on fitted parameters
-        """
+        '''
 
         x = self.dataset.data[:, 0]
         n = len(x)

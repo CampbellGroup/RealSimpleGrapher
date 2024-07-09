@@ -1,9 +1,11 @@
-from PyQt4 import QtGui
+from PyQt5 import QtGui
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QListWidget
+
 from twisted.internet.defer import inlineCallbacks
 import socket
 
 
-class DataVaultList(QtGui.QWidget):
+class DataVaultList(QWidget):
 
     def __init__(self, tracename, parent=None):
         super(DataVaultList, self).__init__()
@@ -14,13 +16,13 @@ class DataVaultList(QtGui.QWidget):
     def connect(self):
         from labrad.wrappers import connectAsync
         self.cxn = yield connectAsync(name=socket.gethostname() + ' Data Vault Client')
-        self.grapher = yield self.cxn.grapher
+        self.grapher = yield self.cxn.real_simple_grapher
         self.dv = yield self.cxn.data_vault
         self.initializeGUI()
 
     def initializeGUI(self):
-        mainLayout = QtGui.QVBoxLayout()
-        self.dataListWidget = QtGui.QListWidget()
+        mainLayout = QVBoxLayout()
+        self.dataListWidget = QListWidget()
         self.dataListWidget.doubleClicked.connect(self.onDoubleclick)
         mainLayout.addWidget(self.dataListWidget)
         self.setWindowTitle('Data Vault')

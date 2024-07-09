@@ -1,12 +1,14 @@
-# import qt4reactor
-# qt4reactor.install()
-from PyQt4 import QtGui, QtCore
+
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QGroupBox, QDialog, QVBoxLayout, QGridLayout
+
 from twisted.internet.defer import inlineCallbacks, returnValue, DeferredLock, Deferred
 from fractions import Fraction
 # from labrad import units as U
 # from labrad.units import WithUnit
 import numpy as np
 # from common.abstractdevices.SD_tracker.SD_calculator import Transitions_SD as tracker 
+from queue import Queue
 
 class ParamInfo():
     '''
@@ -16,7 +18,7 @@ class ParamInfo():
     def __init__(self, value):
         self.value = value
 
-class PredictSpectrum(QtGui.QWidget):
+class PredictSpectrum(QWidget):
 
     def __init__(self, parent):
         super(PredictSpectrum, self).__init__()
@@ -102,7 +104,7 @@ class PredictSpectrum(QtGui.QWidget):
 
             all_carriers = self.Ca_data.get_transition_energies(b_field*1e-4,line_center) #to Tesla and MHz
 
-            print all_carriers
+            print(all_carriers)
 
             #choose which carriers to include
             included_lines = []
@@ -207,7 +209,7 @@ class EnergyLevel(object):
         J = total_angular_momentum_j
         lande_factor =  self.lande_factor(S, L, J)
         #sublevels are found, 2* self.J is always an integer, so can use numerator
-        self.sublevels_m =  [-J + i for i in xrange( 1 + (2 * J).numerator)]
+        self.sublevels_m =  [-J + i for i in range( 1 + (2 * J).numerator)]
         self.energy_scale = (lande_factor * 9.274e-24 / 6.626e-34) #1.4 MHz / gauss
     
     def lande_factor(self, S, L ,J):
