@@ -56,7 +56,6 @@ class TwistedSocketNotifier(QSocketNotifier):
     """
 
     def __init__(self, reactor, watcher, type):
-        print('is this running')
         QSocketNotifier.__init__(self, watcher.fileno(), type)
         self.reactor = reactor
         self.watcher = watcher
@@ -126,7 +125,6 @@ class QTReactor(PosixReactorBase):
     _timer = None
 
     def __init__(self):
-        print('is this running')
         self._reads = {}
         self._writes = {}
         self._timer=QTimer()
@@ -250,7 +248,6 @@ def install():
     """
     Configure the twisted mainloop to be run inside the qt mainloop.
     """
-    print('is this running')
     from twisted.internet import main
     reactor = QTReactor()
     main.installReactor(reactor)
