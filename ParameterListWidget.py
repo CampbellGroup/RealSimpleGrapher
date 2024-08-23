@@ -17,6 +17,6 @@ class ParameterList(QWidget):
 
     @inlineCallbacks
     def populate(self):
-        parameters = yield self.dataset.getParameters()
+        parameters = yield self.dataset.get_parameters()
         self.parameterListWidget.clear()
         self.parameterListWidget.addItems([str(x) for x in sorted(parameters)])
