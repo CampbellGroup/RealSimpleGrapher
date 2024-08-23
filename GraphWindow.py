@@ -5,22 +5,22 @@ import sys
 from PyQt5.QtWidgets import *
 
 import GUIConfig
-from GraphWidgetPyQtGraph import Graph_PyQtGraph as Graph
-from HistWidgetPyQtGraph import Hist_PyQtGraph as Hist
-from ScrollingGraphWidgetPyQtGraph import ScrollingGraph_PyQtGraph as ScrollingGraph
+from GraphWidget import PyQTGraphWidget as Graph
+from HistWidget import PyQTGraphHistWidget as Hist
+from ScrollingGraphWidget import ScrollingPyQTGraphWidget as ScrollingGraph
 from ImageWidget import imageWidget as ImageGraph
 from GridGraphWindow import GridGraphWindow
 
 
 class GraphWindow(QTabWidget):
-    def __init__(self, reactor, cxn = None, parent=None):
+    def __init__(self, reactor, cxn=None, parent=None):
         super(GraphWindow, self).__init__(parent)
         self.cxn = cxn
         self.reactor = reactor
-        self.initUI()
+        self.init_ui()
         self.show()
         
-    def initUI(self):
+    def init_ui(self):
         reactor = self.reactor
 
         self.graphDict = {}
@@ -36,14 +36,14 @@ class GraphWindow(QTabWidget):
             for config in gcli:
                 name = config.name
                 max_ds = config.max_datasets
-                if config.isScrolling:
+                if config.is_scrolling:
                     g = ScrollingGraph(config, reactor, self.cxn)
-                elif config.isImages:
+                elif config.is_images:
                     g = ImageGraph(config, reactor)
                     self.graphDict[name] = g
                     gli.append(g)
                     continue
-                elif config.isHist:
+                elif config.is_hist:
                     g = Hist(config, reactor, self.cxn)
                     self.graphDict[name] = g
                     gli.append(g)

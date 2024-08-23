@@ -32,7 +32,7 @@ class FitWindow(QWidget):
 
     def initUI(self):
         self.setWindowTitle(self.ident)
-        mainLayout = QVBoxLayout()
+        main_layout = QVBoxLayout()
         buttons = QHBoxLayout()
 
         self.model_select = QComboBox(self)
@@ -48,9 +48,9 @@ class FitWindow(QWidget):
 
         self.fw.setModel(str(self.model_select.currentText()))
 
-        mainLayout.addWidget(self.model_select)
-        mainLayout.addWidget(self.parameterTable)
-        mainLayout.addLayout(buttons)
+        main_layout.addWidget(self.model_select)
+        main_layout.addWidget(self.parameterTable)
+        main_layout.addLayout(buttons)
         buttons.addWidget(self.fitButton)
         buttons.addWidget(self.plotButton)
 
@@ -59,15 +59,15 @@ class FitWindow(QWidget):
         self.plotButton.clicked.connect(self.onPlot)
 
         self.setupParameterTable()
-        self.setLayout(mainLayout)
+        self.setLayout(main_layout)
         self.show()
 
     def setupParameterTable(self):
 
         self.parameterTable.clear()
 
-        headerLabels = QtCore.QStringListModel(['Vary', 'Param', 'Manual', 'Fitted'])
-        self.parameterTable.setHorizontalHeaderLabels(headerLabels)
+        header_labels = ['Vary', 'Param', 'Manual', 'Fitted']
+        self.parameterTable.setHorizontalHeaderLabels(header_labels)
         self.parameterTable.horizontalHeader().setStretchLastSection(True)
 
         params = self.fw.getParameters()

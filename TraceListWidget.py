@@ -6,7 +6,7 @@ from ParameterListWidget import ParameterList
 from DataVaultListWidget import DataVaultList
 from FitWindowWidget import FitWindow
 from PredictSpectrumWidget import PredictSpectrum
-from GUIConfig import traceListConfig, colors
+from GUIConfig import TraceListConfig, colors
 
 
 class TraceList(QListWidget):
@@ -14,7 +14,7 @@ class TraceList(QListWidget):
         super(TraceList, self).__init__()
         self.parent = parent
         self.windows = []
-        self.config = traceListConfig()
+        self.config = TraceListConfig()
         self.setStyleSheet("background-color:%s;" % self.config.background_color)
         try:
             self.use_trace_color = self.config.use_trace_color

@@ -1,17 +1,14 @@
-from GraphWidgetPyQtGraph import Graph_PyQtGraph
+from GraphWidget import PyQTGraphWidget
 from PyQt5 import QtGui, QtCore
 
 
-class ScrollingGraph_PyQtGraph(Graph_PyQtGraph):
+class ScrollingPyQTGraphWidget(PyQTGraphWidget):
     def __init__(self, name, reactor, parent=None, ylim=(0, 1), cxn=None):
         super().__init__(name, reactor, parent)
         self.set_xlimits([0, 100])
         self.pointsToKeep = 100
 
     def update_figure(self):
-        # if len(self.artists) != 0:
-        #     # print(self.name, type(self), self.artists)
-        #     print(self.name, type(self), "scrolling update_figure")
         x = [0]
         y = [0]
         for ident, params in self.artists.items():

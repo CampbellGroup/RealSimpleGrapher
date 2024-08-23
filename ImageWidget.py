@@ -1,12 +1,7 @@
 import sys
 from PyQt5 import QtGui, QtCore
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QGroupBox, QDialog, QVBoxLayout, QGridLayout
+from PyQt5.QtWidgets import *
 import pyqtgraph as pg
-from TraceListWidget import TraceList
-from twisted.internet.defer import inlineCallbacks
-from twisted.internet.task import LoopingCall
-import itertools
-from queue import Queue
 
 
 class imageWidget(QWidget):

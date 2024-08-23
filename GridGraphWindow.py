@@ -1,17 +1,8 @@
 """
 Window containing a grid of graphs
 """
-import sys
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QGroupBox, QDialog, QVBoxLayout, QGridLayout
+from PyQt5.QtWidgets import *
 
-from GraphWidgetPyQtGraph import Graph_PyQtGraph as Graph
-from ScrollingGraphWidgetPyQtGraph import ScrollingGraph_PyQtGraph as ScrollingGraph
-import GUIConfig
-from twisted.internet.defer import Deferred, inlineCallbacks, returnValue
-from twisted.internet.task import LoopingCall
-from twisted.internet.threads import blockingCallFromThread
-from queue import Queue
 
 class GridGraphWindow(QWidget):
     def __init__(self, g_list, row_list, column_list, reactor, parent=None):

@@ -1,18 +1,17 @@
 """
 The Real Simple Grapher
 """
+import sys
 
 from GraphWindow import GraphWindow
-from Dataset import Dataset
+from RSGDataset import RSGDataset
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QWidget, QAction, QTabWidget, QVBoxLayout, QLabel
+from PyQt5.QtWidgets import *
 
-a = QApplication( [])
+a = QApplication(sys.argv)
 import qt5reactor
 qt5reactor.install()
-#import server libraries
-from twisted.internet.defer import returnValue, DeferredLock, Deferred, inlineCallbacks
-from twisted.internet.threads import deferToThread
+from twisted.internet.defer import inlineCallbacks
 from twisted.internet import reactor
 from labrad.server import LabradServer, setting
 
@@ -34,8 +33,9 @@ timeout = 5
 
 
 class RealSimpleGrapher(LabradServer):
-    
+
     name = "Real Simple Grapher"
+
     @inlineCallbacks
     def initServer(self):
         self.listeners = set()
@@ -47,11 +47,11 @@ class RealSimpleGrapher(LabradServer):
 
     def make_dataset(self, dataset_location):
         cxt = self.client.context()
-        ds = Dataset(self.dv, cxt, dataset_location, reactor)
+        ds = RSGDataset(self.dv, cxt, dataset_location, reactor)
         return ds
 
     def do_plot(self, dataset_location, graph, send_to_current):
-        if (graph != 'current') and (send_to_current == True):
+        if (graph != 'current') and send_to_current:
             # add the plot to the Current tab as well as an additional
             # specified tab for later examination
             ds = self.make_dataset(dataset_location)

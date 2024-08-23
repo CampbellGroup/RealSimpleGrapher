@@ -15,7 +15,7 @@ class Lorentzian(Model):
             }
 
     def model(self, x, p):
-        '''
+        """
         Base Lorentzian model. Using definition from
         http://mathworld.wolfram.com/LorentzianFunction.html
 
@@ -23,7 +23,7 @@ class Lorentzian(Model):
         peak height
 
         p = [center, scale, gamma, offset]
-        '''
+        """
         p[2] = abs(p[2]) # fwhm is positive
         return p[3] +  p[1]*0.5*p[2]/( (x - p[0])**2 + (0.5*p[2])**2)
 
