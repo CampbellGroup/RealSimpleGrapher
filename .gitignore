@@ -1,2 +1,4 @@
 GUIConfig.py
 *.pyc
+.idea
+
