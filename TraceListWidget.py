@@ -21,16 +21,15 @@ class TraceList(QListWidget):
         except AttributeError:
             self.use_trace_color = False
 
-        self.name = 'pmt'
+        self.name = "pmt"
         self.initUI()
 
     def initUI(self):
         self.trace_dict = {}
-        item = QListWidgetItem('Traces')
+        item = QListWidgetItem("Traces")
         item.setCheckState(QtCore.Qt.Checked)
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.popupMenu)
-
 
     def addTrace(self, ident, color):
         item = QListWidgetItem(ident)
@@ -60,8 +59,8 @@ class TraceList(QListWidget):
         menu = QMenu()
         item = self.itemAt(pos)
         if item is None:
-            dataaddAction = menu.addAction('Add Data Set')
-            spectrumaddAction = menu.addAction('Add Predicted Spectrum')
+            dataaddAction = menu.addAction("Add Data Set")
+            spectrumaddAction = menu.addAction("Add Predicted Spectrum")
 
             action = menu.exec_(self.mapToGlobal(pos))
             if action == dataaddAction:
@@ -76,9 +75,9 @@ class TraceList(QListWidget):
 
         else:
             ident = str(item.text())
-            parametersAction = menu.addAction('Parameters')
-            togglecolorsAction = menu.addAction('Toggle colors')
-            fitAction = menu.addAction('Fit')
+            parametersAction = menu.addAction("Parameters")
+            togglecolorsAction = menu.addAction("Toggle colors")
+            fitAction = menu.addAction("Fit")
             selectColorMenu = menu.addMenu("Select color")
             redAction = selectColorMenu.addAction("red")
             greenAction = selectColorMenu.addAction("green")
@@ -92,21 +91,23 @@ class TraceList(QListWidget):
             pinkAction = selectColorMenu.addAction("pink")
             tealAction = selectColorMenu.addAction("teal")
             lavenderAction = selectColorMenu.addAction("lavender")
-            colorActionDict = {redAction: colors["red"],
-                               greenAction: colors["green"],
-                               yellowAction: colors["yellow"],
-                               blueAction: colors["blue"],
-                               orangeAction: colors["orange"],
-                               purpleAction: colors["purple"],
-                               cyanAction: colors["cyan"],
-                               magentaAction: colors["magenta"],
-                               limeAction: colors["lime"],
-                               pinkAction: colors["pink"],
-                               tealAction: colors["teal"],
-                               lavenderAction: colors["lavender"]}
+            colorActionDict = {
+                redAction: colors["red"],
+                greenAction: colors["green"],
+                yellowAction: colors["yellow"],
+                blueAction: colors["blue"],
+                orangeAction: colors["orange"],
+                purpleAction: colors["purple"],
+                cyanAction: colors["cyan"],
+                magentaAction: colors["magenta"],
+                limeAction: colors["lime"],
+                pinkAction: colors["pink"],
+                tealAction: colors["teal"],
+                lavenderAction: colors["lavender"],
+            }
 
             action = menu.exec_(self.mapToGlobal(pos))
-            
+
             if action == parametersAction:
                 # option to show parameters in separate window
                 dataset = self.parent.artists[ident].dataset
@@ -114,10 +115,12 @@ class TraceList(QListWidget):
                 self.windows.append(pl)
                 pl.show()
 
-            if action == togglecolorsAction:               
+            if action == togglecolorsAction:
                 # option to change color of line
                 new_color = colors[next(self.parent.colorChooser)]
-                self.parent.artists[ident].artist.setPen(new_color, symbolBrush=new_color)
+                self.parent.artists[ident].artist.setPen(
+                    new_color, symbolBrush=new_color
+                )
                 self.changeTraceListColor(ident, new_color)
 
             if action == fitAction:
@@ -129,6 +132,7 @@ class TraceList(QListWidget):
 
             if action in colorActionDict.keys():
                 new_color = colorActionDict[action]
-                self.parent.artists[ident].artist.setPen(new_color, symbolBrush=new_color)
+                self.parent.artists[ident].artist.setPen(
+                    new_color, symbolBrush=new_color
+                )
                 self.changeTraceListColor(ident, new_color)
-

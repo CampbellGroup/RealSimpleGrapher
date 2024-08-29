@@ -28,6 +28,7 @@ class PyQTGraphWidget(QWidget):
         # noinspection PyArgumentList
         super().__init__(parent)
         from labrad.units import WithUnit as U
+
         self.U = U
         self.cxn = cxn
         self.pv = self.cxn.parametervault
@@ -61,29 +62,39 @@ class PyQTGraphWidget(QWidget):
         self.tracelist = TraceList(self)
         self.pw = pg.PlotWidget()
         if self.vline_name:
-            self.inf = pg.InfiniteLine(movable=True, angle=90,
-                                       label=self.vline_name + '{value:0.0f}',
-                                       labelOpts={'position': 0.9,
-                                                  'color': (200, 200, 100),
-                                                  'fill': (200, 200, 200, 50),
-                                                  'movable': True})
+            self.inf = pg.InfiniteLine(
+                movable=True,
+                angle=90,
+                label=self.vline_name + "{value:0.0f}",
+                labelOpts={
+                    "position": 0.9,
+                    "color": (200, 200, 100),
+                    "fill": (200, 200, 200, 50),
+                    "movable": True,
+                },
+            )
             init_value = yield self.get_init_vline()
-            init_value = float(format(init_value[init_value.units], '.4g'))
+            init_value = float(format(init_value[init_value.units], ".4g"))
             self.inf.setValue(init_value)
             self.inf.setPen(width=5.0)
 
         if self.hline_name:
-            self.inf = pg.InfiniteLine(movable=True, angle=0,
-                                       label=self.hline_name + '{value:0.0f}',
-                                       labelOpts={'position': 0.9,
-                                                  'color': (200, 200, 100),
-                                                  'fill': (200, 200, 200, 50),
-                                                  'movable': True})
+            self.inf = pg.InfiniteLine(
+                movable=True,
+                angle=0,
+                label=self.hline_name + "{value:0.0f}",
+                labelOpts={
+                    "position": 0.9,
+                    "color": (200, 200, 100),
+                    "fill": (200, 200, 200, 50),
+                    "movable": True,
+                },
+            )
             init_value = yield self.get_init_hline()
             self.inf.setValue(init_value)
             self.inf.setPen(width=5.0)
 
-        self.coords = QLabel('')
+        self.coords = QLabel("")
         self.title = QLabel(self.name)
         frame = QFrame()
         splitter = QSplitter()
@@ -137,8 +148,15 @@ class PyQTGraphWidget(QWidget):
         """
         new_color = next(self.colorChooser)
         if self.show_points and not no_points:
-            line = self.pw.plot([], [], symbol='o', symbolBrush=self.get_item_color(new_color),
-                                name=ident, pen=self.get_item_color(new_color), connect=self.scatter_plot)
+            line = self.pw.plot(
+                [],
+                [],
+                symbol="o",
+                symbolBrush=self.get_item_color(new_color),
+                name=ident,
+                pen=self.get_item_color(new_color),
+                connect=self.scatter_plot,
+            )
         else:
             line = self.pw.plot([], [], pen=self.get_item_color(new_color), name=ident)
         if self.grid_on:
@@ -172,7 +190,7 @@ class PyQTGraphWidget(QWidget):
                 # self.legend.removeItem(ident)
                 self.artists[ident].shown = False
         except KeyError:
-            raise Exception('404 Artist not found')
+            raise Exception("404 Artist not found")
 
     def checkbox_changed(self):
         for ident, item in self.tracelist.trace_dict.items():
@@ -216,19 +234,21 @@ class PyQTGraphWidget(QWidget):
 
     def mouse_moved(self, pos):
         pnt = self.img.mapFromScene(pos)
-        string = '(' + str(pnt.x()) + ' , ' + str(pnt.y()) + ')'
+        string = "(" + str(pnt.x()) + " , " + str(pnt.y()) + ")"
         self.coords.setText(string)
 
     @inlineCallbacks
     def get_init_vline(self):
-        init_vline = yield self.pv.get_parameter(self.vline_param[0],
-                                                 self.vline_param[1])
+        init_vline = yield self.pv.get_parameter(
+            self.vline_param[0], self.vline_param[1]
+        )
         returnValue(init_vline)
 
     @inlineCallbacks
     def get_init_hline(self):
-        init_hline = yield self.pv.get_parameter(self.hline_param[0],
-                                                 self.hline_param[1])
+        init_hline = yield self.pv.get_parameter(
+            self.hline_param[0], self.hline_param[1]
+        )
         returnValue(init_hline)
 
     @inlineCallbacks
@@ -248,14 +268,15 @@ class PyQTGraphWidget(QWidget):
         yield self.pv.set_parameter(self.hline_param[0], self.hline_param[1], val)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     import qt5reactor
+
     qt5reactor.install()
     from twisted.internet import reactor
 
     # noinspection PyTypeChecker
-    main = PyQTGraphWidget('example', reactor)
+    main = PyQTGraphWidget("example", reactor)
     main.show()
     # noinspection PyUnresolvedReferences
     reactor.run()

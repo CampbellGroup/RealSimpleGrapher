@@ -6,7 +6,7 @@ import mpmath as mp
 
 
 class motional_distribution:
-    
+
     @classmethod
     def thermal(cls, nbar, dimension):
         """
@@ -15,12 +15,12 @@ class motional_distribution:
         @param dimension: number of required entries
         """
         return np.fromfunction(lambda n: cls._thermal(nbar, n), (dimension,))
-    
+
     @classmethod
     def _thermal(cls, nbar, n):
         #  level population probability for a given nbar, see Leibfried 2003 (57)
-        return 1 / (nbar + 1) * (nbar / (nbar + 1))**n
-    
+        return 1 / (nbar + 1) * (nbar / (nbar + 1)) ** n
+
     @classmethod
     def displaced_thermal(cls, alpha, nbar, dimension):
         """
@@ -29,8 +29,10 @@ class motional_distribution:
         @param nbar: temperature of the thermal distribution
         @param dimension: required number of modes
         """
-        return np.fromfunction(lambda n: cls._displaced_thermal(alpha, nbar, n), (dimension,))
-    
+        return np.fromfunction(
+            lambda n: cls._displaced_thermal(alpha, nbar, n), (dimension,)
+        )
+
     @classmethod
     def _displaced_thermal(cls, alpha, nbar, n):
         """
@@ -38,22 +40,34 @@ class motional_distribution:
         """
         #  this is needed because for some inputs (larrge n or small nbar), this term is 0 while the
         #  laguerre term is infinite. their product is zero but beyond the floating point precision
-        old_settings = np.seterr(invalid='raise')
+        old_settings = np.seterr(invalid="raise")
         try:
-            populations = (1. / (nbar + 1.0) * (nbar / (nbar + 1.0))**n *
-                           laguerre(n, 0, -alpha**2 / (nbar * (nbar + 1.0))) * np.exp(-alpha**2 / (nbar + 1.0)))
+            populations = (
+                    1.0
+                    / (nbar + 1.0)
+                    * (nbar / (nbar + 1.0)) ** n
+                    * laguerre(n, 0, -(alpha ** 2) / (nbar * (nbar + 1.0)))
+                    * np.exp(-(alpha ** 2) / (nbar + 1.0))
+            )
         except FloatingPointError:
             np.seterr(**old_settings)
-            print('precise calculation required', alpha, nbar)
-            populations = [mp.fprod((1 / (nbar + 1.0),
-                                     mp.power(nbar / (nbar + 1.0), k),
-                                     mp.laguerre(k, 0, -alpha**2 / (nbar * (nbar + 1.0))),
-                                     mp.exp(-alpha**2 / (nbar + 1.0)))) for k in n]
-            print('done computing populations')
-            populations = np.array(populations) 
-            print('returned array')
+            print("precise calculation required", alpha, nbar)
+            populations = [
+                mp.fprod(
+                    (
+                        1 / (nbar + 1.0),
+                        mp.power(nbar / (nbar + 1.0), k),
+                        mp.laguerre(k, 0, -(alpha ** 2) / (nbar * (nbar + 1.0))),
+                        mp.exp(-(alpha ** 2) / (nbar + 1.0)),
+                    )
+                )
+                for k in n
+            ]
+            print("done computing populations")
+            populations = np.array(populations)
+            print("returned array")
         return populations
-    
+
     @classmethod
     def test_displaced_thermal(cls):
         """
@@ -64,12 +78,13 @@ class motional_distribution:
         test_entries = 100
         computed = cls.displaced_thermal(alpha, nbar, test_entries)
         from qutip import thermal_dm, displace
-        thermal_dm = thermal_dm(test_entries, nbar, method='analytic')
+
+        thermal_dm = thermal_dm(test_entries, nbar, method="analytic")
         displace_operator = displace(test_entries, alpha)
         displaced_dm = displace_operator * thermal_dm * displace_operator.dag()
         qutip_result = displaced_dm.diag()
         return np.allclose(qutip_result, computed)
-    
+
     @classmethod
     def test_thermal_distribution(cls):
         """
@@ -79,30 +94,41 @@ class motional_distribution:
         test_entries = 10
         computed = cls.thermal(nbar, test_entries)
         from qutip import thermal_dm
-        thermal_qutip = thermal_dm(test_entries, nbar, method='analytic').diag()
+
+        thermal_qutip = thermal_dm(test_entries, nbar, method="analytic").diag()
         return np.allclose(thermal_qutip, computed)
 
 
-if __name__ == '__main__':
-    
+if __name__ == "__main__":
+
     md = motional_distribution
-    
+
+
     def plot_displaced():
         from matplotlib import pyplot
+
         hilbert_space_dimension = 5000
         nbar = 3.0
-        for displ, color in [(0, 'k'), (5, 'b'), (10, 'g'), (2500, 'r')]:
+        for displ, color in [(0, "k"), (5, "b"), (10, "g"), (2500, "r")]:
             displacement_nbar = displ
             displacement_alpha = np.sqrt(displacement_nbar)
-            distribution = md.displaced_thermal(displacement_alpha, nbar, hilbert_space_dimension)
+            distribution = md.displaced_thermal(
+                displacement_alpha, nbar, hilbert_space_dimension
+            )
             print(distribution.sum())
-            pyplot.plot(distribution, 'x', color=color, label='displacement = {} nbar'.format(displ))
-        
-        pyplot.title('Init temperature 3nbar', fontsize=16)
-        pyplot.suptitle('Displaced Thermal States', fontsize=20)
+            pyplot.plot(
+                distribution,
+                "x",
+                color=color,
+                label="displacement = {} nbar".format(displ),
+            )
+
+        pyplot.title("Init temperature 3nbar", fontsize=16)
+        pyplot.suptitle("Displaced Thermal States", fontsize=20)
         pyplot.legend()
         pyplot.show()
-    
-#     print md.test_thermal_distribution()
-#     print md.test_displaced_thermal()
+
+
+    #     print md.test_thermal_distribution()
+    #     print md.test_displaced_thermal()
     plot_displaced()

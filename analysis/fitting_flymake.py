@@ -11,9 +11,16 @@ from fit_ramsey import SineSquared_Ramsey
 from fit_sinc import Sinc
 
 
-class FitWrapper():
-
-    models = ['Lorentzian', 'Linear', 'Bessel', 'Exponential Decay', 'SineSquared', 'Ramsey', 'Sinc']
+class FitWrapper:
+    models = [
+        "Lorentzian",
+        "Linear",
+        "Bessel",
+        "Exponential Decay",
+        "SineSquared",
+        "Ramsey",
+        "Sinc",
+    ]
 
     def __init__(self, dataset, index):
         self.dataset = dataset
@@ -22,21 +29,21 @@ class FitWrapper():
     def setModel(self, model):
 
         model_dict = {
-            'Lorentzian': Lorentzian,
-            'Linear': Linear,
-            'Bessel': Bessel,
-            'Exponential Decay': ExponentialDecay,
-            'SineSquared': SineSquared,
-            'Ramsey': SineSquared_Ramsey,
-            'Sinc': Sinc
-            }
+            "Lorentzian": Lorentzian,
+            "Linear": Linear,
+            "Bessel": Bessel,
+            "Exponential Decay": ExponentialDecay,
+            "SineSquared": SineSquared,
+            "Ramsey": SineSquared_Ramsey,
+            "Sinc": Sinc,
+        }
         self.model = model_dict[model]()
 
     def getParameters(self):
-        '''
+        """
         Returns a list of params
         sorted in order of index
-        '''
+        """
         params = self.model.parameters.keys()
         return sorted(params, key=lambda p: self.model.parameters[p].index)
 
@@ -48,7 +55,7 @@ class FitWrapper():
             return self.model.parameters[p].manual_value
         except:  # value doesn't exist. Use automatic guess
             x = self.dataset.data[:, 0]
-            y = self.dataset.data[:, self.index+1]
+            y = self.dataset.data[:, self.index + 1]
             guess = self.model.guess_param(p, x, y)
             self.model.parameters[p].manual_value = guess
             return guess
@@ -92,16 +99,16 @@ class FitWrapper():
             param.fit_value = param.manual_value
 
     def evaluateFittedParameters(self):
-        '''
+        """
         Evaluate the model on a fine grid
         Return 2-d numpy array data where
         data[:,0] = fine_grid
         data[:,1] = model evaluated on fitted parameters
-        '''
+        """
 
         x = self.dataset.data[:, 0]
         n = len(x)
-        N = 10*n
+        N = 10 * n
         xmin = x[0]
         xmax = x[-1]
         fine_grid = np.linspace(xmin, xmax, N)
@@ -117,16 +124,16 @@ class FitWrapper():
         return data
 
     def evaluateManualParameters(self):
-        '''
+        """
         Evaluate the model on a fine grid
         Return 2-d numpy array data where
         data[:,0] = fine_grid
         data[:,1] = model evaluated on manual parameters
-        '''
+        """
 
         x = self.dataset.data[:, 0]
         n = len(x)
-        N = 10*n
+        N = 10 * n
         xmin = x[0]
         xmax = x[-1]
         fine_grid = np.linspace(xmin, xmax, N)

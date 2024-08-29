@@ -1,6 +1,7 @@
 """
 Parent class for datasets
 """
+
 from twisted.internet.defer import inlineCallbacks, returnValue, DeferredLock
 from PyQt5.QtCore import QObject
 
@@ -24,13 +25,17 @@ class RSGDataset(QObject):
 
     def connect_datavault(self):
         yield self.data_vault.cd(self.dataset_location[0], context=self.context)
-        path, dataset_name = yield self.data_vault.open(self.dataset_location[1], context=self.context)
+        path, dataset_name = yield self.data_vault.open(
+            self.dataset_location[1], context=self.context
+        )
         self.dataset_name = dataset_name
 
     @inlineCallbacks
     def setup_listeners(self):
         yield self.data_vault.signal__data_available(11111, context=self.context)
-        yield self.data_vault.addListener(listener=self.update_data, source=None, ID=11111, context=self.context)
+        yield self.data_vault.addListener(
+            listener=self.update_data, source=None, ID=11111, context=self.context
+        )
 
     @inlineCallbacks
     def open_dataset(self):
@@ -42,7 +47,9 @@ class RSGDataset(QObject):
         parameters = yield self.data_vault.parameters(context=self.context)
         parameter_values = []
         for parameter in parameters:
-            parameter_value = yield self.data_vault.get_parameter(parameter, context=self.context)
+            parameter_value = yield self.data_vault.get_parameter(
+                parameter, context=self.context
+            )
             parameter_values.append((parameter, parameter_value))
         returnValue(parameter_values)
 
@@ -53,6 +60,7 @@ class RSGDataset(QObject):
     @inlineCallbacks
     def get_data(self):
         from labrad.units import DimensionlessArray
+
         data = yield self.data_vault.get(100, context=self.context)
         if self.data is None:
             yield self.accessingData.acquire()
@@ -74,11 +82,15 @@ class RSGDataset(QObject):
         labels = []
         yield self.open_dataset()
         variables = yield self.data_vault.variables(context=self.context)
-        path, dataset_name = yield self.data_vault.open(self.dataset_location[1], context=self.context)
+        path, dataset_name = yield self.data_vault.open(
+            self.dataset_location[1], context=self.context
+        )
         for i in range(len(variables[1])):
-            labels.append(variables[1][i][1] + ' - ' + dataset_name)
+            labels.append(variables[1][i][1] + " - " + dataset_name)
         returnValue(labels)
 
     @inlineCallbacks
     def disconnect_data_signal(self):
-        yield self.data_vault.removeListener(listener=self.update_data, source=None, ID=11111, context=self.context)
+        yield self.data_vault.removeListener(
+            listener=self.update_data, source=None, ID=11111, context=self.context
+        )

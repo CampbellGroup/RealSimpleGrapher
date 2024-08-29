@@ -16,7 +16,7 @@ class ScrollingPyQTGraphWidget(PyQTGraphWidget):
                 try:
                     index = params.index
                     x = params.dataset.data[:, 0]
-                    y = params.dataset.data[:, index+1]
+                    y = params.dataset.data[:, index + 1]
                     params.artist.setData(x, y)
                 except TypeError:
                     pass
@@ -24,15 +24,17 @@ class ScrollingPyQTGraphWidget(PyQTGraphWidget):
                     raise e
         try:
             mousepressed = QtGui.QGuiApplication.mouseButtons()
-            if (mousepressed == QtCore.Qt.LeftButton) or (mousepressed == QtCore.Qt.RightButton):
-                return 
+            if (mousepressed == QtCore.Qt.LeftButton) or (
+                    mousepressed == QtCore.Qt.RightButton
+            ):
+                return
                 # see if we need to redraw
             xmin_cur, xmax_cur = self.current_limits
             x_cur = x[-1]  # current largest x value
             window_width = xmax_cur - xmin_cur
             # scroll if we've reached 75% of the window
-            if x_cur > (xmin_cur + 0.75*window_width) and (x_cur < xmax_cur):
-                shift = (xmax_cur - xmin_cur)/2.0
+            if x_cur > (xmin_cur + 0.75 * window_width) and (x_cur < xmax_cur):
+                shift = (xmax_cur - xmin_cur) / 2.0
                 xmin = xmin_cur + shift
                 xmax = xmax_cur + shift
                 self.set_xlimits([xmin, xmax])

@@ -1,6 +1,7 @@
 """
 The Real Simple Grapher
 """
+
 import sys
 
 from GraphWindow import GraphWindow
@@ -10,6 +11,7 @@ from PyQt5.QtWidgets import *
 
 a = QApplication(sys.argv)
 import qt5reactor
+
 qt5reactor.install()
 from twisted.internet.defer import inlineCallbacks
 from twisted.internet import reactor
@@ -40,8 +42,8 @@ class RealSimpleGrapher(LabradServer):
     def initServer(self):
         self.listeners = set()
         self.gui = GraphWindow(reactor, cxn=self.client)
-        self.gui.setWindowTitle('Real Simple Grapher')
-        self.gui.setWindowIcon(QtGui.QIcon('icon.png'))
+        self.gui.setWindowTitle("Real Simple Grapher")
+        self.gui.setWindowIcon(QtGui.QIcon("icon.png"))
         self.dv = yield self.client.data_vault
         self.pv = yield self.client.parametervault
 
@@ -51,11 +53,11 @@ class RealSimpleGrapher(LabradServer):
         return ds
 
     def do_plot(self, dataset_location, graph, send_to_current):
-        if (graph != 'current') and send_to_current:
+        if (graph != "current") and send_to_current:
             # add the plot to the Current tab as well as an additional
             # specified tab for later examination
             ds = self.make_dataset(dataset_location)
-            self.gui.graphDict['current'].add_dataset(ds)
+            self.gui.graphDict["current"].add_dataset(ds)
         ds = self.make_dataset(dataset_location)
         if graph in self.gui.hidden_tabs:
             self.gui.insert_closed_tab(graph)
@@ -67,26 +69,44 @@ class RealSimpleGrapher(LabradServer):
     def do_imshow(self, data, image_size, graph, name):
         self.gui.graphDict[graph].update_image(data, image_size, name)
 
-    @setting(1, 'Plot', dataset_location=['(*s, s)', '(*s, i)'], graph='s', send_to_current='b', returns='')
+    @setting(
+        1,
+        "Plot",
+        dataset_location=["(*s, s)", "(*s, i)"],
+        graph="s",
+        send_to_current="b",
+        returns="",
+    )
     def plot(self, c, dataset_location, graph, send_to_current=True):
         self.do_plot(dataset_location, graph, send_to_current)
 
-    @setting(2, 'Plot with axis', dataset_location=['(*s, s)', '(*s, i)'], graph='s', axis='*v', send_to_current='b',
-             returns='')
+    @setting(
+        2,
+        "Plot with axis",
+        dataset_location=["(*s, s)", "(*s, i)"],
+        graph="s",
+        axis="*v",
+        send_to_current="b",
+        returns="",
+    )
     def plot_with_axis(self, c, dataset_location, graph, axis, send_to_current=True):
         minim = min(axis)
         maxim = max(axis)
-        if (graph != 'current') and (send_to_current is True):
-            self.gui.graphDict['current'].set_xlimits([minim[minim.units], maxim[maxim.units]])
+        if (graph != "current") and (send_to_current is True):
+            self.gui.graphDict["current"].set_xlimits(
+                [minim[minim.units], maxim[maxim.units]]
+            )
         self.gui.graphDict[graph].set_xlimits([minim[minim.units], maxim[maxim.units]])
         self.do_plot(dataset_location, graph, send_to_current)
 
-    @setting(3, 'Plot image', image='*i', image_size='*i', graph='s', name='s', returns='')
-    def plot_image(self, c, image, image_size, graph, name=''):
+    @setting(
+        3, "Plot image", image="*i", image_size="*i", graph="s", name="s", returns=""
+    )
+    def plot_image(self, c, image, image_size, graph, name=""):
         self.do_imshow(image, image_size, graph, name)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from labrad import util
 
     util.runServer(RealSimpleGrapher())

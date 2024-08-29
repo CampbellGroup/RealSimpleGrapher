@@ -21,9 +21,17 @@ from analysis.fit_ramsey import SineSquared_Ramsey
 from analysis.fit_sinc import Sinc
 
 
-class FitWrapper():
-
-    models = ['Lorentzian', 'Linear', 'Bessel', 'Exponential Decay', 'SineSquared', 'Ramsey', 'Sinc', 'Sidebands']
+class FitWrapper:
+    models = [
+        "Lorentzian",
+        "Linear",
+        "Bessel",
+        "Exponential Decay",
+        "SineSquared",
+        "Ramsey",
+        "Sinc",
+        "Sidebands",
+    ]
 
     def __init__(self, dataset, index):
         self.dataset = dataset
@@ -32,22 +40,22 @@ class FitWrapper():
     def setModel(self, model):
 
         model_dict = {
-            'Lorentzian': Lorentzian,
-            'Gaussian': Gaussian,
-            'Linear': Linear,
-            'Bessel': Bessel,
-            'Exponential Decay': ExponentialDecay,
-            'SineSquared': SineSquared,
-            'Ramsey': SineSquared_Ramsey,
-            'Sinc': Sinc,
-            'Sidebands': Mod_Lorentzian,
-            'Sinusoid': Sinusoid,
-            'Sinusoid2': Sinusoid2,
-            'ExponentialDecay': ExponentialDecay,
-            'GaussianDecay': GaussianDecay,
-            'RamseyDecay': RamseyDecay,
-            'RamseyBfield': RamseyBfield
-            }
+            "Lorentzian": Lorentzian,
+            "Gaussian": Gaussian,
+            "Linear": Linear,
+            "Bessel": Bessel,
+            "Exponential Decay": ExponentialDecay,
+            "SineSquared": SineSquared,
+            "Ramsey": SineSquared_Ramsey,
+            "Sinc": Sinc,
+            "Sidebands": Mod_Lorentzian,
+            "Sinusoid": Sinusoid,
+            "Sinusoid2": Sinusoid2,
+            "ExponentialDecay": ExponentialDecay,
+            "GaussianDecay": GaussianDecay,
+            "RamseyDecay": RamseyDecay,
+            "RamseyBfield": RamseyBfield,
+        }
         self.model = model_dict[model]()
 
     def getParameters(self):
@@ -66,7 +74,7 @@ class FitWrapper():
             return self.model.parameters[p].manual_value
         except:  # value doesn't exist. Use automatic guess
             x = self.dataset.data[:, 0]
-            y = self.dataset.data[:, self.index+1]
+            y = self.dataset.data[:, self.index + 1]
             guess = self.model.guess_param(p, x, y)
             self.model.parameters[p].manual_value = guess
             return guess
@@ -95,7 +103,7 @@ class FitWrapper():
         varied_positions = self.model.varied_positions()
         fixed_positions = self.model.fixed_positions()
         x0 = [self.model.param_from_index(k).manual_value for k in varied_positions]
-        
+
         result = optimize.leastsq(residual, x0)
         result = result[0]
 
@@ -120,7 +128,7 @@ class FitWrapper():
 
         x = self.dataset.data[:, 0]
         n = len(x)
-        N = 10*n
+        N = 10 * n
         xmin = x[0]
         xmax = x[-1]
         fine_grid = np.linspace(xmin, xmax, N)
@@ -136,16 +144,16 @@ class FitWrapper():
         return data
 
     def evaluateManualParameters(self):
-        '''
+        """
         Evaluate the model on a fine grid
         Return 2-d numpy array data where
         data[:,0] = fine_grid
         data[:,1] = model evaluated on manual parameters
-        '''
+        """
 
         x = self.dataset.data[:, 0]
         n = len(x)
-        N = 10*n
+        N = 10 * n
         xmin = x[0]
         xmax = x[-1]
         fine_grid = np.linspace(xmin, xmax, N)

@@ -39,12 +39,14 @@ class PyQTGraphHistWidget(QWidget):
         self.live_update_loop = LoopingCall(self.update_figure)
         self.live_update_loop.start(0)
 
-        colors = [(255, 0, 0, 80),
-                  (0, 255, 0, 80),
-                  (255, 255, 0, 80),
-                  (0, 255, 255, 80),
-                  (255, 0, 255, 80),
-                  (255, 255, 255, 80)]
+        colors = [
+            (255, 0, 0, 80),
+            (0, 255, 0, 80),
+            (255, 255, 0, 80),
+            (0, 255, 255, 80),
+            (255, 0, 255, 80),
+            (255, 255, 255, 80),
+        ]
         self.colorChooser = itertools.cycle(colors)
         self.init_ui()
 
@@ -54,16 +56,21 @@ class PyQTGraphHistWidget(QWidget):
         self.tracelist = TraceList(self)
         self.pw = pg.PlotWidget()
         if self.vline_name:
-            self.inf = pg.InfiniteLine(movable=True, angle=90,
-                                       label=self.vline_name + '{value:0.0f}',
-                                       labelOpts={'position': 0.9,
-                                                  'color': (200, 200, 100),
-                                                  'fill': (200, 200, 200, 50),
-                                                  'movable': True})
+            self.inf = pg.InfiniteLine(
+                movable=True,
+                angle=90,
+                label=self.vline_name + "{value:0.0f}",
+                labelOpts={
+                    "position": 0.9,
+                    "color": (200, 200, 100),
+                    "fill": (200, 200, 200, 50),
+                    "movable": True,
+                },
+            )
             init_value = yield self.get_init_vline()
             self.inf.setValue(init_value)
             self.inf.setPen(width=5.0)
-        self.coords = QLabel('')
+        self.coords = QLabel("")
         self.title = QLabel(self.name)
         frame = QFrame()
         splitter = QSplitter()
@@ -92,12 +99,14 @@ class PyQTGraphHistWidget(QWidget):
 
     def get_item_color(self, color):
 
-        color_dict = {(255, 0, 0, 80): QtGui.QColor(QtCore.Qt.red).lighter(130),
-                      (0, 255, 0, 80): QtGui.QColor(QtCore.Qt.green),
-                      (255, 255, 0, 80): QtGui.QColor(QtCore.Qt.yellow),
-                      (0, 255, 255, 80): QtGui.QColor(QtCore.Qt.cyan),
-                      (255, 0, 255, 80): QtGui.QColor(QtCore.Qt.magenta).lighter(120),
-                      (255, 255, 255, 80): QtGui.QColor(QtCore.Qt.white)}
+        color_dict = {
+            (255, 0, 0, 80): QtGui.QColor(QtCore.Qt.red).lighter(130),
+            (0, 255, 0, 80): QtGui.QColor(QtCore.Qt.green),
+            (255, 255, 0, 80): QtGui.QColor(QtCore.Qt.yellow),
+            (0, 255, 255, 80): QtGui.QColor(QtCore.Qt.cyan),
+            (255, 0, 255, 80): QtGui.QColor(QtCore.Qt.magenta).lighter(120),
+            (255, 255, 255, 80): QtGui.QColor(QtCore.Qt.white),
+        }
         return color_dict[color]
 
     def update_figure(self):
@@ -122,7 +131,9 @@ class PyQTGraphHistWidget(QWidget):
         It is to allow data fits to be plotted without points
         """
         new_color = next(self.colorChooser)
-        hist = pg.PlotCurveItem([0, 1], [1], stepMode=True, fillLevel=0, brush=new_color, pen=None)
+        hist = pg.PlotCurveItem(
+            [0, 1], [1], stepMode=True, fillLevel=0, brush=new_color, pen=None
+        )
         self.artists[ident] = ArtistParameters(hist, dataset, index, True)
         self.pw.addItem(hist)
         self.tracelist.addTrace(ident, new_color)
@@ -151,7 +162,7 @@ class PyQTGraphHistWidget(QWidget):
                 self.pw.removeItem(artist)
                 self.artists[ident].shown = False
         except KeyError:
-            raise Exception('404 Artist not found')
+            raise Exception("404 Artist not found")
 
     def checkbox_changed(self):
         for ident, item in self.tracelist.trace_dict.items():
@@ -196,13 +207,14 @@ class PyQTGraphHistWidget(QWidget):
 
     def mouse_moved(self, pos):
         pnt = self.img.mapFromScene(pos)
-        string = '(' + str(pnt.x()) + ' , ' + str(pnt.y()) + ')'
+        string = "(" + str(pnt.x()) + " , " + str(pnt.y()) + ")"
         self.coords.setText(string)
 
     @inlineCallbacks
     def get_init_vline(self):
-        init_vline = yield self.pv.get_parameter(self.vline_param[0],
-                                                 self.vline_param[1])
+        init_vline = yield self.pv.get_parameter(
+            self.vline_param[0], self.vline_param[1]
+        )
         print("init_vline: {init_vline}")
         returnValue(init_vline)
 
@@ -210,17 +222,16 @@ class PyQTGraphHistWidget(QWidget):
     def vline_changed(self, sig):
         val = self.inf.value()
         val = int(round(val))
-        yield self.pv.set_parameter(self.vline_param[0],
-                                    self.vline_param[1], val)
+        yield self.pv.set_parameter(self.vline_param[0], self.vline_param[1], val)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     import qt5reactor
 
     qt5reactor.install()
     from twisted.internet import reactor
 
-    main = PyQTGraphHistWidget('example', reactor)
+    main = PyQTGraphHistWidget("example", reactor)
     main.show()
     reactor.run()

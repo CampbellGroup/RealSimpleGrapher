@@ -27,7 +27,7 @@ class FitWindow(QWidget):
         self.parent = parent
         self.fw = FitWrapper(dataset, index)
         self.row_info_dict = {}
-        self.ident = 'Fit: ' + str(self.dataset.dataset_name)
+        self.ident = "Fit: " + str(self.dataset.dataset_name)
         self.initUI()
 
     def initUI(self):
@@ -42,9 +42,9 @@ class FitWindow(QWidget):
         self.parameterTable = QTableWidget()
         self.parameterTable.setColumnCount(4)
 
-        self.fitButton = QPushButton('Fit', self)
+        self.fitButton = QPushButton("Fit", self)
 
-        self.plotButton = QPushButton('Plot manual', self)
+        self.plotButton = QPushButton("Plot manual", self)
 
         self.fw.setModel(str(self.model_select.currentText()))
 
@@ -66,7 +66,7 @@ class FitWindow(QWidget):
 
         self.parameterTable.clear()
 
-        header_labels = ['Vary', 'Param', 'Manual', 'Fitted']
+        header_labels = ["Vary", "Param", "Manual", "Fitted"]
         self.parameterTable.setHorizontalHeaderLabels(header_labels)
         self.parameterTable.horizontalHeader().setStretchLastSection(True)
 
@@ -81,7 +81,10 @@ class FitWindow(QWidget):
 
             self.row_info_dict[p] = RowInfo(vary_select, manual_value, fitted_value)
 
-            vary_select.setFlags(QtCore.Qt.ItemFlag.ItemIsUserCheckable | QtCore.Qt.ItemFlag.ItemIsEnabled)
+            vary_select.setFlags(
+                QtCore.Qt.ItemFlag.ItemIsUserCheckable
+                | QtCore.Qt.ItemFlag.ItemIsEnabled
+            )
             if self.fw.getVary(p):
                 vary_select.setCheckState(QtCore.Qt.CheckState.Checked)
             else:
@@ -93,8 +96,8 @@ class FitWindow(QWidget):
             manual_value.setValue(manualValue)
 
             fittedValue = self.fw.getFittedValue(p)
-            #fitted_value.setDecimals(6)
-            #fitted_value.setRange(-1000000000, 1000000000)
+            # fitted_value.setDecimals(6)
+            # fitted_value.setRange(-1000000000, 1000000000)
             fitted_value.setText(str(fittedValue))
             self.parameterTable.setItem(i, 0, vary_select)
             self.parameterTable.setCellWidget(i, 1, label)
@@ -114,10 +117,10 @@ class FitWindow(QWidget):
             self.fw.setManualValue(p, manual_value)
 
     def updateParametersFromFitter(self):
-        '''
+        """
         Set the fitted and manual parameters
         fields to the fit values
-        '''
+        """
         params = self.fw.getParameters()
         for p in params:
             row = self.row_info_dict[p]
@@ -126,13 +129,13 @@ class FitWindow(QWidget):
             row.manual_value.setValue(fitted_value)
 
     def plotFit(self):
-        '''
+        """
         Plot the fitted parameters.
         We need to wrap the data in a dataset
         object to use add_artist in GraphWidget
-        '''
+        """
 
-        class dataset():
+        class dataset:
             def __init__(self, data):
                 self.data = data
                 self.updateCounter = 1
@@ -147,22 +150,22 @@ class FitWindow(QWidget):
             self.parent.parent.add_artist(self.ident, ds, 0, no_points=True)
 
     def onActivated(self):
-        '''
+        """
         Run when model is changed.
         Reset row_info_dict each
         time the model is changed.
-        '''
+        """
         model = str(self.model_select.currentText())
         self.fw.setModel(model)
         self.row_info_dict = {}
         self.setupParameterTable()
 
     def onClick(self):
-        '''
+        """
         Send table parameters to fitter,
         perform fit, and then update
         paramter table with the results
-        '''
+        """
 
         self.updateParametersToFitter()
         self.fw.doFit()
@@ -170,12 +173,12 @@ class FitWindow(QWidget):
         self.plotFit()
 
     def onPlot(self):
-        '''
+        """
         Plot the manual parameters. See documentation
         for plotFit()
-        '''
+        """
 
-        class dataset():
+        class dataset:
             def __init__(self, data):
                 self.data = data
                 self.updateCounter = 1

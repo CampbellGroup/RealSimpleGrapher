@@ -15,7 +15,8 @@ class DataVaultList(QWidget):
     @inlineCallbacks
     def connect(self):
         from labrad.wrappers import connectAsync
-        self.cxn = yield connectAsync(name=socket.gethostname() + ' Data Vault Client')
+
+        self.cxn = yield connectAsync(name=socket.gethostname() + " Data Vault Client")
         self.grapher = yield self.cxn.real_simple_grapher
         self.dv = yield self.cxn.data_vault
         self.initializeGUI()
@@ -25,7 +26,7 @@ class DataVaultList(QWidget):
         self.dataListWidget = QListWidget()
         self.dataListWidget.doubleClicked.connect(self.onDoubleclick)
         mainLayout.addWidget(self.dataListWidget)
-        self.setWindowTitle('Data Vault')
+        self.setWindowTitle("Data Vault")
         self.setLayout(mainLayout)
         self.populate()
         self.show()
@@ -34,7 +35,7 @@ class DataVaultList(QWidget):
     def populate(self):
         self.dataListWidget.clear()
         ls = yield self.dv.dir()
-        self.dataListWidget.addItem('...')
+        self.dataListWidget.addItem("...")
         self.dataListWidget.addItems(sorted(ls[0]))
         if ls[1] is not None:
             self.dataListWidget.addItems(sorted(ls[1]))
@@ -42,7 +43,7 @@ class DataVaultList(QWidget):
     @inlineCallbacks
     def onDoubleclick(self, item):
         item = self.dataListWidget.currentItem().text()
-        if item == '...':
+        if item == "...":
             yield self.dv.cd(1)
             self.populate()
         else:

@@ -1,13 +1,15 @@
 # Fitting wrapper class
 
-class ParameterInfo():
+
+class ParameterInfo:
     def __init__(self, parameter, index, guess_func, vary=True):
         self.parameter = parameter
         self.vary = vary
         self.guess_func = guess_func
         self.index = index
 
-class Model():
+
+class Model:
 
     def __init__(self):
         pass
@@ -19,7 +21,7 @@ class Model():
         return self.parameters[param].guess_func(x, y)
 
     def reduced_model(self, x, p):
-        '''
+        """
         reduced_model() allows model() to be optimized
         if certain parameters are to be held fixed.
 
@@ -34,11 +36,11 @@ class Model():
         Then, whichever places are unfilled in full_params,
         fill them with the elements of p, an N - k parameter list.
         Evaluate model on full_params.
-        '''
+        """
 
         n = len(self.parameters.keys())
         full_params = [None for k in range(n)]
-        
+
         for key in self.parameters.keys():
             if not self.parameters[key].vary:
                 index = self.parameters[key].index
@@ -51,9 +53,9 @@ class Model():
         return self.model(x, full_params)
 
     def varied_positions(self):
-        '''
+        """
         Indices of the parameters to vary in the fit
-        '''
+        """
         varied = []
         for param in self.parameters.keys():
             if self.parameters[param].vary:
@@ -62,9 +64,9 @@ class Model():
         return varied
 
     def fixed_positions(self):
-        '''
+        """
         Indicies of the parameters to hold fixed in the fit
-        '''
+        """
         fixed = []
         for param in self.parameters.keys():
             if not self.parameters[param].vary:
@@ -73,13 +75,13 @@ class Model():
         return fixed
 
     def param_from_index(self, index):
-        '''
+        """
         Return a parameter from the index
-        '''
+        """
 
         for param in self.parameters.keys():
             if self.parameters[param].index == index:
                 return self.parameters[param]
 
         # parmeter not found
-        raise Exception('Parameter not found')
+        raise Exception("Parameter not found")

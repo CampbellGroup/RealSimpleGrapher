@@ -1,6 +1,7 @@
 """
 Window for holding Graphs
 """
+
 import sys
 from PyQt5.QtWidgets import *
 
@@ -19,7 +20,7 @@ class GraphWindow(QTabWidget):
         self.reactor = reactor
         self.init_ui()
         self.show()
-        
+
     def init_ui(self):
         reactor = self.reactor
 
@@ -72,23 +73,25 @@ class GraphWindow(QTabWidget):
         current_widget = self.widget(current_index)
         self.hidden_tabs += current_widget.children
         self.removeTab(current_index)
-            
+
     def insert_closed_tab(self, name):
         first_plot = self.first_plot[name]
         parent_name = self.parent_lookup[name]
         widget = self.tabDict[first_plot]
         index = self.addTab(widget, parent_name)
         self.setCurrentIndex(index)
-        
+
     def closeEvent(self, x):
         self.reactor.stop()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     import qt5reactor
+
     qt5reactor.install()
     from twisted.internet import reactor
+
     main = GraphWindow(reactor)
     main.show()
     # noinspection PyUnresolvedReferences
