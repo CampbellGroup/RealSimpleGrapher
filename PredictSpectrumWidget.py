@@ -106,7 +106,7 @@ class PredictSpectrum(QWidget):
 
             self.value_dict[p] = ParamInfo(value)
 
-            value.setDecimals(3)
+            value.set_decimals(3)
             value.setRange(-100, 100)
             value.setValue(0)
 
